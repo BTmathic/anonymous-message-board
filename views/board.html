@@ -47,7 +47,6 @@
             // THIS IS NOT WHAT IT WOULD LOOK LIKE TO GO LIVE
             //
             data.forEach((post) => {
-              console.log(post); //can I use typeScript please?!
               let thread = ['<div class="thread">'];
               thread.push('<div class="main">')
               thread.push('<p class="id">id: ' + post._id + ' (' + post.created_on + ')</p>');
@@ -55,9 +54,8 @@
               thread.push('<form id="deleteThread"><input type="hidden" value="' + post._id + '" name="thread_id" required=""><input type="text" placeholder="password" name="delete_password" required=""><input type="submit" value="Delete"></form>');
               thread.push('<h3>' + post.text + '</h3>');
               thread.push('</div><div class="replies">');
-              const hiddenCount = post.replycount - 3;
-              if (hiddenCount < 1) { hiddenCount = 0 };
-              thread.push('<h5>' + post.replycount + ' replies total (' + hiddenCount + ' hidden)- <a href="' + window.location.pathname + post._id + '">See the full thread here</a>.</h5>');
+              const hiddenCount = post.replyCount < 3 ? 0 : post.replyCount - 3;
+              thread.push('<h5>' + post.replies.length + ' replies total (' + hiddenCount + ' hidden)- <a href="' + window.location.pathname + post._id + '">See the full thread here</a>.</h5>');
               post.replies.forEach((reply) => {
                 thread.push('<div class="reply">')
                 thread.push('<p class="id">id: ' + reply._id + ' (' + reply.created_on + ')</p>');

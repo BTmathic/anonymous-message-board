@@ -84,13 +84,25 @@ module.exports = (app) => {
   
     .get((req, res) => {
       const board = req.params.board;
-      console.log(board);
       Board.findOne({name: board}, (err, data) => {
         if (err) {
           console.log('Error retrieving board data ', err);
         }
         if (data !== null) {
-          res.send(data.threads.sort((a, b) => new Date(b.bumped_on) - new Date(a.bumped_on)).slice(0,10));
+          // The spread operator would make this much nicer...
+          const trimmedReplies = data.threads.map((thread) => ({ // remove passwords and report booleans
+            _id: thread._id,
+            text: thread.text,
+            created_on: thread.created_on,
+            bumped_on: thread.bumped_on,
+            replyCount: thread.replies.length, 
+            replies: thread.replies.slice(-3).map((reply) => ({
+              _id: reply._id,
+              text: reply.text,
+              created_on: reply.created_on
+            }))
+          }));
+          res.send(trimmedReplies.sort((a, b) => new Date(b.bumped_on) - new Date(a.bumped_on)).slice(0,10));
         } else {
           Board.create({name: board}, (err, data) => {
             if (err) {
@@ -100,8 +112,140 @@ module.exports = (app) => {
           });
         }
       });
+    })
+  
+    .put((req, res) => {
+      const thread_id = req.body.report_id;
+      Board.findOne({name: req.params.board}, (err, data) => {
+        if (err) {
+          console.log('Error finding thread ', err);
+        }
+        const currentThread = data.threads.filter((thread) => thread._id.toString() === thread_id)[0];
+        const currentThreadIndex = data.threads.indexOf(currentThread);
+        currentThread.reported = true;
+        data.threads[currentThreadIndex] = currentThread;
+        data.save((err) => {
+          if (err) {
+            console.log('Error reporting thread ', err);
+          }
+          res.send('success');
+        });
+      });
+    })
+  
+    .delete((req, res) => {
+      const thread_id = req.body.thread_id;
+      Board.findOne({name: req.params.board}, (err, data) => {
+        const currentThread = data.threads.filter((thread) => thread._id.toString() === thread_id)[0];
+        if (currentThread.delete_password === req.body.delete_password) {
+          data.threads = data.threads.filter((thread) => thread._id.toString() !== thread_id);
+          data.save((err) => {
+            if (err) {
+              console.log('Error deleting thread ', err);
+            }
+            res.send('success');
+          });
+        } else {
+          res.send('incorrect password');
+        }
+      });
     });
     
-  app.route('/api/replies/:board');
-
+  app.route('/api/replies/:board')
+    .post((req, res) => {
+      const thread_id = req.body.thread_id;
+      const created = new Date();
+      const newReply = new Reply({
+        text: req.body.text,
+        delete_password: req.body.delete_password,
+        created_on: created,
+        reported: false
+      });
+      Board.findOne({name: req.params.board}, (err, data) => {
+        for (let i=0; i < data.threads.length; i++) {
+          if (data.threads[i]._id.toString() === thread_id) {
+            data.threads[i].replies.push(newReply);
+            data.threads[i].bumped_on = created;
+            data.save((err) => {
+              if (err) {
+                console.log('Error posting reply ', err);
+              }
+            });
+          }
+        }
+        res.send(newReply);
+      });
+    })
+  
+    .get((req, res) => {
+      const thread_id = req.url.split('=')[1];
+      Board.findOne({name: req.params.board}, (err, data) => {
+        if (err) {
+          console.log('Error finding thread ', err);
+        }
+        const currentThread = data.threads.filter((thread) => thread._id.toString() === thread_id)[0];
+        const trimmedThread = { // remove passwords and report booleans
+          _id: currentThread._id,
+          text: currentThread.text,
+          created_on: currentThread.created_on,
+          bumped_on: currentThread.bumped_on,
+          replies: currentThread.replies.map((reply) => ({
+            _id: reply._id,
+            text: reply.text,
+            created_on: reply.created_on
+          }))
+        };
+        res.send(trimmedThread);
+      });
+    })
+  
+    .put((req, res) => {
+      const thread_id = req.body.thread_id;
+      const reply_id = req.body.reply_id;
+      Board.findOne({name: req.params.board}, (err, data) => {
+        if (err) {
+          console.log('Error finding thread ', err);
+        }
+        const currentThread = data.threads.filter((thread) => thread._id.toString() === thread_id)[0];
+        const currentThreadIndex = data.threads.indexOf(currentThread);
+        const currentReply = currentThread.replies.filter((reply) => reply._id.toString() === reply_id)[0];
+        const currentReplyIndex = currentThread.replies.indexOf(currentReply);
+        currentReply.reported = true;
+        currentThread.replies[currentReplyIndex] = currentReply;
+        data.threads[currentThreadIndex] = currentThread;
+        data.save((err) => {
+          if (err) {
+            console.log('Error reporting reply ', err);
+          }
+          res.send('success');
+        });
+      });
+    })
+  
+    .delete((req, res) => {
+      const thread_id = req.body.thread_id;
+      const reply_id = req.body.reply_id;
+      Board.findOne({name: req.params.board}, (err, data) => {
+        if (err) {
+          console.log('Error finding thread ', err);
+        }
+        const currentThread = data.threads.filter((thread) => thread._id.toString() === thread_id)[0];
+        const currentThreadIndex = data.threads.indexOf(currentThread);
+        const currentReply = currentThread.replies.filter((reply) => reply._id.toString() === reply_id)[0];
+        const currentReplyIndex = currentThread.replies.indexOf(currentReply);
+        if (currentReply.delete_password === req.body.delete_password) {
+          currentReply.text = '[deleted]';
+          currentThread.replies[currentReplyIndex] = currentReply;
+          data.threads[currentThreadIndex] = currentThread;
+          data.save((err, data) => {
+            if (err) {
+              console.log('Error delting reply ', err);
+            }
+            res.send('success');
+          });
+        } else {
+          res.send('incorrect password');
+        }
+      });
+    })
 };
