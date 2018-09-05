@@ -1,0 +1,33 @@
+{
+	"name": "anonymous-message-board",
+	"version": "0.0.1",
+	"description": "Message board app with multiple boards and the ability for users to create their own threads on any board, comment on other threads, and only they (or mods) can delete the posts with a password they create with the original post",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"body-parser": "^1.15.2",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "cors": "^2.8.1",
+		"express": "^4.14.0",
+    "helmet": "^3.1.0",
+		"mocha": "^3.2.0",
+		"mongodb": "^2.2.16",
+    "mongoose": "^5.2.12",
+		"zombie": "^5.0.5"
+	},
+	"engines": {
+		"node": "8"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://lace-switch.glitch.me/"
+	},
+	"keywords": [
+		"node",
+		"express"
+	],
+	"license": "MIT"
+}
