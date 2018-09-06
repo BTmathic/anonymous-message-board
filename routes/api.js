@@ -11,7 +11,9 @@
 const expect = require('chai').expect;
 const mongoose = require('mongoose');
 
-const db = mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
+// use test separate database to not clog the main one with junk data
+const db = process.env.NODE_ENV === 'test' ? mongoose.connect(process.env.MONGO_URI_TEST, { useNewUrlParser: true })
+                                             : mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 const Schema = mongoose.Schema;
 const ReplySchema = new Schema({
   text: {
@@ -77,7 +79,7 @@ module.exports = (app) => {
           if (err) {
             console.log('Error saving new post ', err);
           }
-          res.send(newThread);
+          res.redirect('/b/' + board);
         });
       });
     })
@@ -153,6 +155,7 @@ module.exports = (app) => {
     
   app.route('/api/replies/:board')
     .post((req, res) => {
+      const board = req.params.board;
       const thread_id = req.body.thread_id;
       const created = new Date();
       const newReply = new Reply({
@@ -161,7 +164,7 @@ module.exports = (app) => {
         created_on: created,
         reported: false
       });
-      Board.findOne({name: req.params.board}, (err, data) => {
+      Board.findOne({name: board}, (err, data) => {
         for (let i=0; i < data.threads.length; i++) {
           if (data.threads[i]._id.toString() === thread_id) {
             data.threads[i].replies.push(newReply);
@@ -173,7 +176,7 @@ module.exports = (app) => {
             });
           }
         }
-        res.send(newReply);
+        res.redirect('/b/' + board + '/' + thread_id);
       });
     })
   
