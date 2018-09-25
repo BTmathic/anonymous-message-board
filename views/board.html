@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Welcome to HyperDev!</title>
-    <meta name="description" content="A cool thing made with HyperDev">
+    <title>Anon board</title>
+    <meta name="description" content="Anonymous message board">
+    <!--
     <link id="favicon" rel="icon" href="https://hyperdev.com/favicon-app.ico" type="image/x-icon">
+    -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,20 +14,34 @@
   <body>
     <header>
       <h1 id='boardTitle'></h1>
+      <p id='boardPosts'></p>
     </header>
     
-    <div id='submitNewThread'>
-      <h3>Submit a new thread:</h3>
-      <form id="newThread" method="post" action="/api/">
-        <textarea rows="8" cols="120" type='text' placeholder='Thread text...' name='text' required=''></textarea><br>
-        <input type='text' placeholder='password to delete' name='delete_password' required=''><br>
-        <input type="submit" value="Submit">
-      </form>
-    </div>
-    
-    <div id='boardDisplay'></div>
-    
-    <hr style='margin: 50px; margin-top: 200px'>
+    <main>
+      <div id='submitNewThread'>
+        <h2 class='submitNewThread--title'>
+          Submit a new thread
+        </h2>
+        <div class='submitNewThread__contents'>
+          <form id="newThread" class='submitNewThread--form' method="post" action="/api/">
+            <textarea class='submitNewThread--text' rows="8" cols="120" type='text' placeholder='Thread text...' name='text' required=''></textarea><br>
+            <div class='submitNewThread__actions'>
+              <input class='submitNewThread--password' type='text' placeholder='password to delete' name='delete_password' required=''><br>
+              <input class='submitNewThread--submit' type="submit" value="Submit">
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class='recentPosts'>
+        <h2 class='recentPosts--title'>
+          Recent posts
+        </h2>
+        <div id='boardDisplay'></div>
+      </div>
+
+      <hr>
+    </main>
     
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
@@ -42,34 +58,32 @@
           success: (data) =>
           {
             const boardThreads= [];
-            //
-            // THIS ARRAY SET UP IS FOR CODE READABILITIES AND TESTING!
-            // THIS IS NOT WHAT IT WOULD LOOK LIKE TO GO LIVE
-            //
             data.forEach((post) => {
-              let thread = ['<div class="thread">'];
-              thread.push('<div class="main">')
-              thread.push('<p class="id">id: ' + post._id + ' (' + post.created_on + ')</p>');
-              thread.push('<form id="reportThread"><input type="hidden" name="report_id" value="' + post._id + '"><input type="submit" value="Report"></form>');
-              thread.push('<form id="deleteThread"><input type="hidden" value="' + post._id + '" name="thread_id" required=""><input type="text" placeholder="password" name="delete_password" required=""><input type="submit" value="Delete"></form>');
-              thread.push('<h3>' + post.text + '</h3>');
-              thread.push('</div><div class="replies">');
+              let thread = [`<div class="thread">`];
+              thread.push(`<div class="main">`)
+              thread.push(`<p class="id">id: ${post._id} (${post.created_on})</p>`);
+              thread.push(`<div class="thread__actions">`);
+              thread.push(`<form id="deleteThread"><input type="hidden" value="${post._id}" name="thread_id" required=""><input class="deleteThread--password" type="text" placeholder="password" name="delete_password" required=""><input type="submit" value="Delete" class="deleteThread--button"></form>`);
+              thread.push(`<form id="reportThread"><input type="hidden" name="report_id" value=" ${post._id}"><input type="submit" value="Report" class="reportThread--button"></form>`);
+              thread.push(`</div><h3 class="thread--title">${post.text}</h3>`);
+              thread.push(`</div><div class="replies">`);
               const hiddenCount = post.replyCount < 3 ? 0 : post.replyCount - 3;
-              thread.push('<h5>' + post.replies.length + ' replies total (' + hiddenCount + ' hidden)- <a href="' + window.location.pathname + post._id + '">See the full thread here</a>.</h5>');
+              thread.push(`<h5>${post.replies.length} replies total (${hiddenCount} hidden) - <a href="${window.location.pathname}/${post._id}">See the full thread here</a>.</h5>`);
               post.replies.forEach((reply) => {
-                thread.push('<div class="reply">')
-                thread.push('<p class="id">id: ' + reply._id + ' (' + reply.created_on + ')</p>');
-                thread.push('<form id="reportReply"><input type="hidden" name="thread_id" value="' + post._id + '"><input type="hidden" name="reply_id" value="' + reply._id + '"><input type="submit" value="Report"></form>');
-                thread.push('<form id="deleteReply"><input type="hidden" value="' + post._id + '" name="thread_id" required=""><input type="hidden" value="' + reply._id + '" name="reply_id" required=""><input type="text" placeholder="password" name="delete_password" required=""><input type="submit" value="Delete"></form>');
-                thread.push('<p>' + reply.text + '</p>');
-                thread.push('</div>')
+                thread.push(`<div class="reply">`)
+                thread.push(`<p class="id">id: ${reply._id} (${reply.created_on})</p>`);
+                thread.push(`<div class="reply__actions">`);
+                thread.push(`<form id="deleteReply"><input type="hidden" value="${post._id}" name="thread_id" required=""><input type="hidden" value="${reply._id}" name="reply_id" required=""><input class="deleteReply--password" type="text" placeholder="password" name="delete_password" required=""><input class="deleteReply--button" type="submit" value="Delete"></form>`);
+                thread.push(`<form id="reportReply"><input type="hidden" name="thread_id" value="${post._id}"><input type="hidden" name="reply_id" value="${reply._id}"><input class="reportReply--button" type="submit" value="Report"></form>`);
+                thread.push(`</div><p class='reply__text'>${reply.text}</p>`);
+                thread.push(`</div>`)
               });
-              thread.push('<div class="newReply">')
-              thread.push('<form action="/api/replies/' + currentBoard + '/" method="post" id="newReply">');
-              thread.push('<input type="hidden" name="thread_id" value="' + post._id + '">');
-              thread.push('<textarea rows="5" cols="80" type="text" placeholder="Quick reply..." name="text" required=""></textarea><br>');
-              thread.push('<input type="text" placeholder="password to delete" name="delete_password" required=""><input style="margin-left: 5px" type="submit" value="Submit">')
-              thread.push('</form></div></div></div>')
+              thread.push(`<div class="newReply">`)
+              thread.push(`<form action="/api/replies/${currentBoard}/" method="post" id="newReply">`);
+              thread.push(`<input type="hidden" name="thread_id" value="${post._id}">`);
+              thread.push(`<textarea class="newReply--text" rows="5" cols="80" type="text" placeholder="Quick reply..." name="text" required=""></textarea><br>`);
+              thread.push(`<input class="newReply--password" type="text" placeholder="password to delete" name="delete_password" required=""><input class="newReply--submit" type="submit" value="Submit">`)
+              thread.push(`</form></div></div></div>`)
               boardThreads.push(thread.join(''));
             });
             $('#boardDisplay').html(boardThreads.join(''));
