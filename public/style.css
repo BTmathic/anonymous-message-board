@@ -4,7 +4,27 @@
 }
 
 body {
+  background: black;
+  color: lightgrey;
   padding: 10px;
+}
+
+header, main {
+  margin: 0 auto;
+  max-width: 80rem;
+}
+
+hr {
+  margin: 50px;
+}
+
+h1 {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+a {
+  color: lightBlue;
 }
 
 .replies {
@@ -12,8 +32,7 @@ body {
 }
 
 .reply {
-  border: 1px dotted black;
-  margin: 5px;
+  border-bottom: 1px dotted grey;
   padding: 5px;
 }
 
@@ -22,15 +41,74 @@ body {
 }
 
 .thread {
+  background: #1A1A1A;
   border: 2px solid black;
-  padding: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+
+.thread--reply {
+  margin: 0 auto;
+  width: 80%;
 }
 
 .id {
   font-size: 10.5px;
+  margin-bottom: 0.5rem;
 }
 
-#submitNewThread {
-  margin: 50px;
+.thread--title {
+  margin: 0.5rem 0;
+}
+
+#submitNewThread, .recentPosts {
+  border-radius: 5px;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 80%;
+}
+
+.submitNewThread--form {
+  background: #1A1A1A;
+  padding: 1rem;
+}
+
+.submitNewThread--title, .recentPosts--title {
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+.reportThread--button, .deleteThread--password, .deleteThread--button, 
+.reportReply--button, .reportReply--password, .deleteReply--password, .deleteReply--button,
+.newReply--password, .newReply--submit,
+.submitNewThread--text, .submitNewThread--password, .submitNewThread--submit {
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+textarea {
+  width: 98%;
+}
+
+.thread__actions, .reply__actions, .submitNewThread__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reportThread--button, .deleteThread--button, .reportReply--button, .deleteReply--button, .newReply--submit, .submitNewThread--submit {
+  background: darkgrey;
+  border: none;
+  color: white;
+}
+
+.deleteThread--button, .deleteReply--button, .newReply--submit {
+  margin-left: 0.2rem;
+}
+
+.reply__text {
+  padding: 1rem 0;
+}
+
+.newReply--text {
+  padding: 0.5rem;
 }

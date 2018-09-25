@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Welcome to HyperDev!</title>
-    <meta name="description" content="A cool thing made with HyperDev">
+    <title>Anon Board</title>
+    <meta name="description" content="Anonymous message board">
+    <!--
     <link id="favicon" rel="icon" href="https://hyperdev.com/favicon-app.ico" type="image/x-icon">
+    -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,9 +14,19 @@
   <body>
     <header>
       <h1>
-        ISQA_3 - Anon Message Board
+        Anon Message Board
       </h1>
+      <p id='boards'></p>
+      <p id='posts'></p>
     </header>
+    <hr style='margin: 50px'>
+    <main>
+      <div class='recent-posts'>
+        Ten most recent posts... to be added
+      </div>
+      <hr style='margin: 50px; margin-top: 200px'>
+    </main>
+    <!--
     <div id='userstories' style='margin-left: 5%; margin-top: 5%'>
       <h3>User Stories</h3>
       <ol>
@@ -36,8 +48,10 @@
       <img src='https://cdn.gomix.com/8f5547a1-a0d6-48f6-aa38-51753a0105f4%2FScreen%20Shot%202017-01-02%20at%201.04.10%20AM.png'>
       <br><br>
       <h2><a href='/b/general/'>Go to testing <i>'/b/general/'</i> board</a></h2>
-    </div>
-    <hr style='margin: 50px'>
+    </div> -->
+    
+    
+    <!--
     <div id='testui' style='margin-left: 5%'>
       <h2 style="text-align: left">API Tests:</h2>
         <h4>New thread (POST /api/threads/:board)</h4>
@@ -91,8 +105,7 @@
           <input type="submit" value="Submit">
         </form>        
     </div>
-    <hr style='margin: 50px; margin-top: 200px'>
-    <!-- Your web-app is https, so your scripts need to be too -->
+    -->
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>
