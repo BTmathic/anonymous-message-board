@@ -1,11 +1,3 @@
-/*
-*
-*
-*       Complete the API routing below
-*
-*
-*/
-
 'use strict';
 
 const expect = require('chai').expect;
@@ -30,6 +22,10 @@ const ReplySchema = new Schema({
 const Reply = mongoose.model('Reply', ReplySchema);
 
 const ThreadSchema = new Schema({
+  board: {
+    type: String,
+    required: true
+  },
   text: {
     type: String,
     required: true
@@ -59,11 +55,39 @@ const Board = mongoose.model('Board', BoardSchema);
 
 module.exports = (app) => {
   
+  app.route('/api/home')
+    .get((req, res) => {
+      Board.find({}, (err, data) => {
+        if (err) {
+          console.log('Error finding data for homepage ', err);
+        }
+        let trimmedReplies = [];
+        for (let i=0; i < data.length; i++) {
+          const boardTrimmedReplies = data[i].threads.map((thread) => ({ // remove passwords and report booleans
+            board: thread.board,
+            _id: thread._id,
+            text: thread.text,
+            created_on: thread.created_on,
+            bumped_on: thread.bumped_on,
+            replyCount: thread.replies.length, 
+            replies: thread.replies.slice(-3).map((reply) => ({
+              _id: reply._id,
+              text: reply.text,
+              created_on: reply.created_on
+            }))
+          }));
+          boardTrimmedReplies.forEach((reply) => trimmedReplies.push(reply));
+        }
+        res.send(trimmedReplies.sort((a, b) => new Date(b.bumped_on) - new Date(a.bumped_on)).slice(0,10));
+      });
+    });
+  
   app.route('/api/threads/:board')
     .post((req, res) => {
       const board = req.params.board;
       const created = new Date();
       const newThread = new Thread({
+        board,
         text: req.body.text,
         delete_password: req.body.delete_password,
         created_on: created,
@@ -93,6 +117,7 @@ module.exports = (app) => {
         if (data !== null) {
           // The spread operator would make this much nicer...
           const trimmedReplies = data.threads.map((thread) => ({ // remove passwords and report booleans
+            board: thread.board,
             _id: thread._id,
             text: thread.text,
             created_on: thread.created_on,

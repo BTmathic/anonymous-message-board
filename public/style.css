@@ -14,13 +14,42 @@ header, main {
   max-width: 80rem;
 }
 
+main h2 {
+  margin-bottom: 50px;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+.faq {
+  color: lightgray;
+  font-size: 125%;
+  font-weight: bold;
+  padding-top: 20px;
+}
+
 hr {
   margin: 50px;
 }
 
 h1 {
-  margin: 2rem 0;
+  margin-top: 1rem;
   text-align: center;
+}
+
+#boardPosts {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.threadDisplay {
+  margin-top: 2rem;
 }
 
 a {
@@ -61,8 +90,7 @@ a {
   margin: 0.5rem 0;
 }
 
-#submitNewThread, .recentPosts {
-  border-radius: 5px;
+nav, .homepage-content, #submitNewThread, .recentPosts, .faq-content {
   margin: 0 auto;
   padding: 1rem;
   width: 80%;
@@ -111,4 +139,45 @@ textarea {
 
 .newReply--text {
   padding: 0.5rem;
+}
+
+.faq-question {
+  background: grey;
+  font-weight: bold;
+  padding: 0.2rem;
+}
+
+.faq-answer {
+  background: #A1A1A1;
+  color: #222;
+  padding: 0.2rem;
+}
+
+.logo-container {
+  background: black;
+  color: lightgrey;
+  display: flex;
+  font-size: 120%;
+  font-weight: bold;
+  padding: 2px 5px;
+  width: 70px;
+}
+
+.aContainer--upper {
+  border-bottom: 20px solid green;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  height: 0px;
+  width: 0px;
+}
+
+.aContainer--lower {
+  background: lightgrey;
+  height: 20px;
+  width: 20px;
+}
+
+.logo-container--tail {
+  padding-left: 5px;
+  padding-top: 20px;
 }

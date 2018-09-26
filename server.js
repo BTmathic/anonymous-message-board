@@ -35,8 +35,10 @@ app.route('/b/:board/:threadid')
   .get((req, res) => {
     res.sendFile(process.cwd() + '/views/thread.html');
   });
-
-//Index page (static HTML)
+app.route('/faq')
+  .get((req, res) => {
+    res.sendFile(process.cwd() + '/views/faq.html');
+  });
 app.route('/')
   .get((req, res) => {
     res.sendFile(process.cwd() + '/views/index.html');
@@ -47,8 +49,6 @@ fccTestingRoutes(app);
 
 //Routing for API 
 apiRoutes(app);
-
-//Sample Front-end
 
     
 //404 Not Found Middleware

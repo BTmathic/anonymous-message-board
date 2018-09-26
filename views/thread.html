@@ -13,11 +13,27 @@
   </head>
   <body>
     <header>
+      <nav>
+        <a href='/'>
+          <div class='logo-container'>
+            <div class='aContainer'>
+              <div class='aContainer--upper'></div>
+              <div class='aContainer--lower'></div>
+            </div>
+            <div class='logo-container--tail'>NON</div>
+          </div>
+        </a>
+        <a href='/faq'>
+          <div class='faq'>
+            ?
+          </div>
+        </a>
+      </nav>
       <h1 id='threadTitle'></h1>
     </header>
     
     <main>
-      <div id='boardDisplay'></div>
+      <div id='boardDisplay' class='threadDisplay'></div>
 
       <hr>
     </main>
@@ -31,6 +47,7 @@
         
         const url = "/api/replies/"+currentURL[0];
         $('#threadTitle').text(window.location.pathname);
+        const board = window.location.pathname.split('/')[2];
         $.ajax({
           type: "GET",
           url: url,
@@ -40,7 +57,7 @@
             let boardThreads= [];
               let thread = [`<div class="thread thread--reply">`];
               thread.push(`<div class="main">`)
-              thread.push(`<p class="id">id: ${threadData._id} (${threadData.created_on})</p>`);
+              thread.push(`<p class="id">id: ${threadData._id} (${threadData.created_on}) on <a href='/b/${board}'>/b/${board}</a></p>`);
               thread.push(`<div class="thread__actions">`);
               thread.push(`<form id="deleteThread"><input type="hidden" value="${threadData._id}" name="thread_id" required=""><input class="deleteThread--password" type="text" placeholder="password" name="delete_password" required=""><input type="submit" value="Delete" class="deleteThread--button"></form>`);
               thread.push(`<form id="reportThread"><input type="hidden" name="report_id" value=" ${threadData._id}"><input type="submit" value="Report" class="reportThread--button"></form>`);

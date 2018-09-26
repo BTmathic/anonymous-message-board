@@ -13,6 +13,22 @@
   </head>
   <body>
     <header>
+      <nav>
+        <a href='/'>
+          <div class='logo-container'>
+            <div class='aContainer'>
+              <div class='aContainer--upper'></div>
+              <div class='aContainer--lower'></div>
+            </div>
+            <div class='logo-container--tail'>NON</div>
+          </div>
+        </a>
+        <a href='/faq'>
+          <div class='faq'>
+            ?
+          </div>
+        </a>
+      </nav>
       <h1 id='boardTitle'></h1>
       <p id='boardPosts'></p>
     </header>
@@ -87,6 +103,7 @@
               boardThreads.push(thread.join(''));
             });
             $('#boardDisplay').html(boardThreads.join(''));
+            $('#boardPosts').html(`${data.length} Post${data.length === 1 ? '' : 's'}`);
           }
         });
         
