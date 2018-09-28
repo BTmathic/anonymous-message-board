@@ -29,6 +29,9 @@
           </div>
         </a>
       </nav>
+      <h1>
+        Welcome to
+      </h1>
       <h1 id='boardTitle'></h1>
       <p id='boardPosts'></p>
     </header>
@@ -67,7 +70,7 @@
         const path = window.location.pathname;
         const currentBoard = path.slice(-1) === '/' ? path.slice(3,-1) : path.slice(3);
         const url = "/api/threads/"+currentBoard;
-        $('#boardTitle').text('Welcome to '+window.location.pathname)
+        $('#boardTitle').text(window.location.pathname)
         $.ajax({
           type: "GET",
           url: url,
@@ -75,6 +78,7 @@
           {
             const boardThreads= [];
             data.forEach((post) => {
+              console.log(post);
               let thread = [`<div class="thread">`];
               thread.push(`<div class="main">`)
               thread.push(`<p class="id">id: ${post._id} (${post.created_on})</p>`);
@@ -84,13 +88,15 @@
               thread.push(`</div><h3 class="thread--title">${post.text}</h3>`);
               thread.push(`</div><div class="replies">`);
               const hiddenCount = post.replyCount < 3 ? 0 : post.replyCount - 3;
-              thread.push(`<h5>${post.replies.length} replies total (${hiddenCount} hidden) - <a href="${window.location.pathname}/${post._id}">See the full thread here</a>.</h5>`);
+              thread.push(`<h5>${post.replyCount} replies total (${hiddenCount} hidden) - <a href="${window.location.pathname}/${post._id}">See the full thread here</a>.</h5>`);
               post.replies.forEach((reply) => {
                 thread.push(`<div class="reply">`)
                 thread.push(`<p class="id">id: ${reply._id} (${reply.created_on})</p>`);
                 thread.push(`<div class="reply__actions">`);
-                thread.push(`<form id="deleteReply"><input type="hidden" value="${post._id}" name="thread_id" required=""><input type="hidden" value="${reply._id}" name="reply_id" required=""><input class="deleteReply--password" type="text" placeholder="password" name="delete_password" required=""><input class="deleteReply--button" type="submit" value="Delete"></form>`);
-                thread.push(`<form id="reportReply"><input type="hidden" name="thread_id" value="${post._id}"><input type="hidden" name="reply_id" value="${reply._id}"><input class="reportReply--button" type="submit" value="Report"></form>`);
+                if (reply.text !== '[deleted]') {
+                  thread.push(`<form id="deleteReply"><input type="hidden" value="${post._id}" name="thread_id" required=""><input type="hidden" value="${reply._id}" name="reply_id" required=""><input class="deleteReply--password" type="text" placeholder="password" name="delete_password" required=""><input class="deleteReply--button" type="submit" value="Delete"></form>`);
+                  thread.push(`<form id="reportReply"><input type="hidden" name="thread_id" value="${post._id}"><input type="hidden" name="reply_id" value="${reply._id}"><input class="reportReply--button" type="submit" value="Report"></form>`);
+                }
                 thread.push(`</div><p class='reply__text'>${reply.text}</p>`);
                 thread.push(`</div>`)
               });
