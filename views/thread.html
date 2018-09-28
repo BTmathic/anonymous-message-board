@@ -67,8 +67,10 @@
                 thread.push(`<div class="reply">`)
                 thread.push(`<p class="id">id: ${reply._id} (${reply.created_on})</p>`);
                 thread.push(`<div class="reply__actions">`);
-                thread.push(`<form id="deleteReply"><input type="hidden" value="${threadData._id}" name="thread_id" required=""><input type="hidden" value="${reply._id}" name="reply_id" required=""><input class="deleteReply--password" type="text" placeholder="password" name="delete_password" required=""><input class="deleteReply--button" type="submit" value="Delete"></form>`);
-                thread.push(`<form id="reportReply"><input type="hidden" name="thread_id" value="${threadData._id}"><input type="hidden" name="reply_id" value="${reply._id}"><input class="reportReply--button" type="submit" value="Report"></form>`);
+                if (reply.text !== '[deleted]') {
+                  thread.push(`<form id="deleteReply"><input type="hidden" value="${threadData._id}" name="thread_id" required=""><input type="hidden" value="${reply._id}" name="reply_id" required=""><input class="deleteReply--password" type="text" placeholder="password" name="delete_password" required=""><input class="deleteReply--button" type="submit" value="Delete"></form>`);
+                  thread.push(`<form id="reportReply"><input type="hidden" name="thread_id" value="${threadData._id}"><input type="hidden" name="reply_id" value="${reply._id}"><input class="reportReply--button" type="submit" value="Report"></form>`);
+                }
                 thread.push(`</div><p class='reply__text'>${reply.text}</p>`);
                 thread.push(`</div>`)
               });
